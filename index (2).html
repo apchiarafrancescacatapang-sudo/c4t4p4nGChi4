@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Transparency Portal</title>
+    <style>
+        :root {
+            --primary-blue: #5c6c9c;
+            --bg-light: #f5f6f9;
+            --border: #d0d7de;
+            --text-dark: #333;
+            --text-muted: #666;
+            --accent-red: #cc3300;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #e0e0e0; display: flex; justify-content: center; padding: 20px; }
+
+        /* Smartphone Shell Simulation */
+        .app-container {
+            width: 375px;
+            height: 750px;
+            background: var(--bg-light);
+            border: 10px solid #222;
+            border-radius: 35px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        /* Top Navigation Header */
+        header {
+            background: white;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        .icon-btn { font-size: 24px; color: var(--primary-blue); cursor: pointer; border: none; background: none; }
+
+        /* Sliding Sidebar */
+        #sidebar {
+            position: absolute;
+            left: -100%;
+            top: 0;
+            width: 80%;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            transition: 0.3s ease;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        #sidebar.open { left: 0; }
+
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-title { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; font-weight: bold; }
+        
+        .side-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 13px; }
+        .img-square { width: 35px; height: 35px; background: #444; border-radius: 4px; }
+        .img-circle { width: 35px; height: 35px; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+
+        /* Main Content Area */
+        main { flex: 1; overflow-y: auto; padding: 15px; position: relative; }
+
+        /* Card Component (From Image 1 & 2) */
+        .card { background: white; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
+        .card-img { width: 100%; height: 160px; background: #333; position: relative; }
+        .follow-btn { position: absolute; top: 10px; left: 10px; width: 25px; height: 25px; border: 1px solid white; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.2); }
+        
+        .card-body { padding: 12px; position: relative; }
+        .options-menu { position: absolute; right: 10px; top: 12px; color: var(--primary-blue); }
+        .card-title { font-size: 15px; font-weight: bold; color: var(--primary-blue); margin-bottom: 4px; width: 90%; }
+        .card-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+
+        /* Timeline Info Section (From Image 3 & 4) */
+        .info-divider { text-align: center; border-bottom: 1px solid var(--border); line-height: 0.1em; margin: 30px 0 20px; font-size: 12px; color: var(--text-muted); }
+        .info-divider span { background: var(--bg-light); padding: 0 10px; }
+
+        .details-panel { font-size: 13px; line-height: 1.6; color: var(--text-dark); }
+        .budget { color: var(--accent-red); font-weight: bold; }
+
+        /* Floating Comment Button */
+        .comment-btn { 
+            position: absolute; 
+            bottom: 20px; 
+            right: 20px; 
+            background: var(--primary-blue); 
+            color: white; 
+            width: 50px; 
+            height: 50px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+
+        /* Overlay */
+        #overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.4); z-index: 999; }
+        #overlay.active { display: block; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div id="overlay" onclick="toggleMenu()"></div>
+
+    <nav id="sidebar">
+        <div style="display:flex; justify-content:space-between; margin-bottom: 20px;">
+            <button class="icon-btn" onclick="toggleMenu()">☰</button>
+            <button class="icon-btn">🔍</button>
+        </div>
+        
+        <div class="sidebar-section">
+            <p class="sidebar-title">FOLLOWED PROJECTS</p>
+            <div class="side-item"><div class="img-square"></div> Pasig-Marikina River Improvement</div>
+            <div class="side-item"><div class="img-square" style="background:#222"></div> Infrastructure Project B</div>
+        </div>
+
+        <div class="sidebar-section">
+            <p class="sidebar-title">FOLLOWED SECTORS</p>
+            <div class="side-item"><div class="img-circle">DPWH</div> DPWH</div>
+            <div class="side-item"><div class="img-circle">JICA</div> JICA</div>
+            <div class="side-item"><div class="img-circle">DENR</div> DENR</div>
+        </div>
+
+        <div class="side-item" style="margin-top:auto"><div class="img-circle">👤</div> Profile</div>
+    </nav>
+
+    <header>
+        <button id="menu-toggle" class="icon-btn" onclick="toggleMenu()">☰</button>
+        <button class="icon-btn">🔍</button>
+    </header>
+
+    <main>
+        <div class="card">
+            <div class="card-img" style="background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Manggahan_Floodway_Dam_-_Pasig.jpg/640px-Manggahan_Floodway_Dam_-_Pasig.jpg') center/cover;">
+                <div class="follow-btn">+</div>
+            </div>
+            <div class="card-body">
+                <div class="options-menu">⋮</div>
+                <h2 class="card-title">Pasig-Marikina River Channel Improvement Project</h2>
+                <p class="card-subtitle">Barangay Manggahan, Pasig City</p>
+                <p class="card-subtitle"><strong>Status:</strong> In progress</p>
+            </div>
+        </div>
+
+        <div class="details-panel">
+            <h3 style="border-bottom: 2px solid var(--primary-blue); display: inline-block; margin-bottom: 10px;">Base Data</h3>
+            <p><strong>Budget:</strong> <span class="budget">P57.7 billion</span> <span style="font-size: 10px; color:#999">(initially P33.1 billion)</span></p>
+            <p><strong>Status:</strong> In progress</p>
+            <p>Progress update expected every few months</p>
+            <p><strong>By:</strong> DPWH and JICA</p>
+        </div>
+
+        <div class="info-divider"><span>2024-11-6</span></div>
+
+        <div class="card">
+            <div class="card-img"></div>
+            <div class="card-body">
+                <h2 class="card-title">Project Name</h2>
+                <p class="card-subtitle">Location</p>
+            </div>
+        </div>
+
+        <div class="comment-btn">💬</div>
+    </main>
+</div>
+
+<script>
+    function toggleMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+    }
+</script>
+
+</body>
+</html>
